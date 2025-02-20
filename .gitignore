@@ -1,0 +1,7 @@
+# Archivos de configuración de Python
+*.pyc
+__pycache__/
+
+# Configuración de entornos y bases de datos locales
+*.sqlite3
+.env
