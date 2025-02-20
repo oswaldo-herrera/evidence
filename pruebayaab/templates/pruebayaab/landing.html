@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaab - Expresa tus dudas </title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> 
+    {% load static %}
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Header con imagen de fondo */
+        header {
+          
+            background: url('{% static "assets/img/work.jpg" %}') center/cover no-repeat;
+
+            color: rgb(199, 169, 34);
+            text-align: center;
+            padding: 120px 20px;
+        }
+        header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        /* Secciones */
+        .section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .caracteristica i {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        /* Testimonios */
+        .testimonio {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            font-style: italic;
+        }
+
+        /* Llamado a la acción */
+        .llamado-a-la-accion {
+            text-align: center;
+            background: #007bff;
+            color: white;
+            padding: 40px 20px;
+        }
+        .llamado-a-la-accion a {
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .footer-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado con imagen de fondo -->
+    <header>
+        <h1>Bienvenido a Yaab</h1>
+        <p>Tu opinion es importante, estamos a tu disposición</p>
+    </header>
+
+    <!-- Descripción -->
+    <section class="section bg-light">
+        <div class="container">
+            <p class="lead">Te invitamos a que ingreses y descubras nuestros servicios.</p>
+        </div>
+    </section>
+
+    <!-- Características -->
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 caracteristica">
+                    <i class="fas fa-search"></i>
+                    <h3>Muestra tu opinion.</h3>
+                    <p>Explora nuestro contenido.</p>
+                </div>
+                <div class="col-md-4 caracteristica">
+                    <i class="fas fa-heart"></i>
+                    <h3>Envia tus dudas.</h3>
+                    <p>Solo inicia sesion, en un instante.</p>
+                </div>
+                <div class="col-md-4 caracteristica">
+                    <i class="fa-solid fa-face-smile"></i>
+                    <h3>...</h3>
+                    <p>Accede ya...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4">Lo que dicen nuestros usuarios</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="testimonio">
+                        <p>"Yaab me ayudó a resolver mi situacion con...."</p>
+                        <strong>- Anónimo </strong>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="testimonio">
+                        <p>"Es facil ingresar!"</p>
+                        <strong>- María </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Llamado a la acción -->
+    <section class="llamado-a-la-accion">
+        <h2>Ingresa y unete a Yaab hoy</h2>
+        <a href="{% url 'registro' %}" class="btn btn-light btn-lg">Regístrate ahora</a>
+        <p class="mt-3">¿Ya tienes una cuenta? <a href="{% url 'login' %}" class="text-light fw-bold">Inicia sesión</a></p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Yaab. Todos los derechos reservados.</p>
+        <div class="footer-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

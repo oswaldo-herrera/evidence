@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        
+        .card {
+            background-color: #174470; 
+        }
+
+        .card-body {
+           padding: 40px;            
+           
+        }
+
+        .list-unstyled li {
+            margin-bottom: 10px; 
+        }
+
+        .btn-link {
+            color: #e0e6ec; 
+            text-decoration: none; 
+        }
+
+        .btn-link:hover {
+            color: #73a7df; 
+            text-decoration: underline; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" id="enlace-formulario">
+                                    <button class="btn btn-link">Dudas y quejas</button>
+                                </a>
+                            </li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}"> 
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link">Cerrar sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9" id="contenido-principal">
+                <h1>Bienvenido al Dashboard</h1>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#enlace-formulario').click(function(event) {
+                event.preventDefault(); // en este seusa para evitar que el enlace recargue la página
+
+                $.ajax({
+                    url: "{% url 'formulario' %}",
+                    type: 'GET',
+                    success: function(data) {
+                        $('#contenido-principal').html(data); // EstecCarga el formulario en el div
+                        $("#formulario-sugerencias").submit(function(event){
+                            event.preventDefault();
+                            $.ajax({
+                                type: 'POST',
+                                url: "{% url 'formulario' %}",
+                                data: $(this).serialize(),
+                                success: function(response){
+                                    $('#contenido-principal').html(response);
+                                }
+                            })
+                        })
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
