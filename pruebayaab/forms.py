@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User 
+from .models import Categoria, Producto
 
 class Formularioyaab(forms.Form):
 
@@ -49,3 +50,26 @@ class FormularioRegistro(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+# >>>>>Ahora estoy usando clases para manejar la categoria en el CRUD<<<<<<
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = ['nombre', 'descripcion'] #Fecha esta generado automaticamente.
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        }
+
+
+#>>>>>>PRODUCTO
+class ProductoForm(forms.ModelForm):
+    #categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), empty_label="Selecciona una categoría", required=True)
+
+   class Meta:
+    model = Producto
+    fields = ['nombre', 'descripcion', 'costo', 'stock', 'categoria', 'disponible']
+
+
+
+

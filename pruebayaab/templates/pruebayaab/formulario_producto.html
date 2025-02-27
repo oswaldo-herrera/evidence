@@ -1,0 +1,52 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if producto %}Editar Producto{% else %}Agregar Producto{% endif %}</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="nombre">Nombre del Producto</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{% if producto %}{{ producto.nombre }}{% endif %}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" required>{% if producto %}{{producto.descripcion}}{% endif %}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="costo">Costo</label>
+            <input type="number" class="form-control" id="costo" name="costo" value="{% if producto %}{{ producto.costo }}{% endif %}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" class="form-control" id="stock" name="stock" value="{% if producto %}{{ producto.stock }}{% endif %}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="categoria">Categoría</label>
+            <select class="form-control" id="categoria" name="categoria" required>
+                <option value="">Seleccion una categoría</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if form.instance.categoria.id == categoria.id  %}selected{% endif %}>{{ categoria.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="disponible">Disponible</label>
+            <select class="form-control" id="disponible" name="disponible" required>
+                <option value="True" {% if producto and producto.disponible %}selected{% endif %}>Sí</option>
+                <option value="False" {% if producto and not producto.disponible %}selected{% endif %}>No</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">
+            {% if producto %}Actualizar{% else %}Guardar{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

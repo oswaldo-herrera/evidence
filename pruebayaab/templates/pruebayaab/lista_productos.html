@@ -1,0 +1,36 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Productos</h2>
+    <a href="{% url 'crear_producto' %}" class="btn btn-success mb-3">Nuevo Producto</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Costo</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Disponible</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>${{ producto.costo }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.categoria.nombre }}</td>
+                <td>{% if producto.disponible %}Sí{% else %}No{% endif %}</td>
+                <td>
+                    <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

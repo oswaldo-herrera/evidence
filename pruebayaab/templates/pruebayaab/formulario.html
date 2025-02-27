@@ -2,44 +2,41 @@
 {% load static %}
 {% block content %}
 
-    <h2>Formulario de Contacto</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Formulario de Contacto</h2>
 
-    <div class="formulario">
-    
+    <div class="card shadow p-4">
         <form method="post">
             {% csrf_token %}
 
-            <div class="campo">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" required>
             </div>
 
-            <div class="campo">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" name="email" class="form-control" required>
             </div>
 
-            <div class="campo">
-                <label for="mensaje">Mensaje:</label>
-                <textarea id="mensaje" name="mensaje"></textarea>
+            <div class="mb-3">
+                <label for="mensaje" class="form-label">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" class="form-control" rows="4" required></textarea>
             </div>
 
-            <button type="submit">Enviar</button>
+            <button type="submit" class="btn btn-primary w-100">Enviar</button>
         </form>
-        
-
-        <div class="mensajes">
-            {% if mensajes %}
-                <ul>
-                    {% for mensaje in mensajes %}
-                        <li>{{ mensaje }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
     </div>
 
-   
-    
+    {% if mensajes %}
+        <div class="alert alert-info mt-3">
+            <ul class="mb-0">
+                {% for mensaje in mensajes %}
+                    <li>{{ mensaje }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
 
 {% endblock %}

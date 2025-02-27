@@ -1,0 +1,19 @@
+{% extends "pruebayaab/dashboard_template.html" %}
+
+{% block content %}
+<h2>{% if form.instance.id %}Editar{% else %}Nueva{% endif %} Categoría</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_nombre" class="form-label">Nombre:</label>
+        {{ form.nombre }}
+    </div>
+    <div class="mb-3">
+        <label for="id_descripcion" class="form-label">Descripción:</label>
+        {{ form.descripcion }}
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'listar_categorias' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

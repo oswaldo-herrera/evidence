@@ -1,0 +1,17 @@
+{% extends "pruebayaab/dashboard_template.html" %}
+
+{% block content %}
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4 w-50">
+            <h2 class="text-center mb-4">¿Seguro que deseas cerrar sesión?</h2>
+            <p class="text-center mb-4">Si haces clic en "Sí, cerrar sesión", se cerrará tu sesión.</p>
+            
+            <form method="post" class="text-center">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mb-2">Sí, cerrar sesión</button>
+            </form>
+            
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary w-100">Cancelar</a>
+        </div>
+    </div>
+{% endblock %}
