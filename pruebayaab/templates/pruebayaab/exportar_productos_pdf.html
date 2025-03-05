@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Listado de Productos</title>
+</head>
+<body>
+    <h2>Listado de Productos</h2>
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Costo</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Disponible</th>
+                <th>Fecha Creación</th>
+                <th>Fecha Actualización</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>${{ producto.costo }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.categoria.nombre }}</td>
+                <td>{{ producto.disponible|yesno:"Sí,No" }}</td>
+                <td>{{ producto.fecha_creacion }}</td>
+                <td>{{ producto.fecha_actualizacion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

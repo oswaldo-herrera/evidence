@@ -7,10 +7,16 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .forms import FormularioRegistro
 from django.http import HttpResponseRedirect
-#CATEGORIA
+#CATEGORIA >>>
 from .models import Categoria
 from .forms import CategoriaForm
-#PRODUCTO
+#Excel
+import pandas as pd
+from django.http import HttpResponse
+#PDF
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+#PRODUCTO >>>
 from .models import Producto
 from .forms import ProductoForm
 
@@ -175,6 +181,41 @@ def eliminar_categoria(request, id):
         return redirect('listar_categorias')
     return render(request, 'pruebayaab/confirmar_eliminacion.html', {'categoria': categoria}) #confirmar_eliminacion es para CATEGORIAS
 
+#EXPORTAR CATEGORIAS 
+
+def exportar_categorias_excel(request):
+    categorias = Categoria.objects.all().values('nombre', 'descripcion', 'fecha_creacion')
+    df = pd.DataFrame(categorias)
+
+    # utilizo 'fecha_creacion' a timezone-naive  para convertir
+    df['fecha_creacion'] = pd.to_datetime(df['fecha_creacion']).dt.tz_localize(None)
+
+    #el response para archivo Excel
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="categorias.xlsx"'
+
+    # Escribimos el DataFrame al archivo Excel
+    with pd.ExcelWriter(response, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Categorías')
+
+    return response
+
+
+def exportar_categorias_pdf(request):
+    categorias = Categoria.objects.all()
+    template = get_template('pruebayaab/exportar_categorias_pdf.html')
+    html = template.render({'categorias': categorias})
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="categorias.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Error al generar PDF", status=500)
+
+    return response
 
 
 #>>>>>>>>VISTA PRODUCTO<<<<<<<<
@@ -217,3 +258,44 @@ def eliminar_producto(request, producto_id):
         producto.delete()
         return redirect('lista_productos')
     return render(request, 'pruebayaab/eliminar_producto.html', {'producto': producto}) #Este html si es para PRODUCTOS
+
+#Exportar
+def exportar_productos_excel(request):
+    productos = Producto.objects.all().values(
+        'nombre', 'descripcion', 'costo', 'stock', 
+        'categoria__nombre', 'fecha_creacion', 
+        'fecha_actualizacion', 'disponible'
+    )
+    
+    df = pd.DataFrame(productos)
+
+    # Convertimos fechas a timezone-naive para evitar errores
+    df['fecha_creacion'] = pd.to_datetime(df['fecha_creacion']).dt.tz_localize(None)
+    df['fecha_actualizacion'] = pd.to_datetime(df['fecha_actualizacion']).dt.tz_localize(None)
+
+    # Configurar response para Excel
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="productos.xlsx"'
+
+    # Escribir DataFrame al response usando ExcelWriter
+    with pd.ExcelWriter(response, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Productos')
+
+    return response
+
+
+def exportar_productos_pdf(request):
+    productos = Producto.objects.all()
+    template = get_template('pruebayaab/exportar_productos_pdf.html')
+    html = template.render({'productos': productos})
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="productos.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Error al generar PDF", status=500)
+
+    return response
