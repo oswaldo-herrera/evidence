@@ -19,6 +19,8 @@ from xhtml2pdf import pisa
 #PRODUCTO >>>
 from .models import Producto
 from .forms import ProductoForm
+#producto graficas
+from django.db.models import Sum, F
 
 
 
@@ -259,7 +261,7 @@ def eliminar_producto(request, producto_id):
         return redirect('lista_productos')
     return render(request, 'pruebayaab/eliminar_producto.html', {'producto': producto}) #Este html si es para PRODUCTOS
 
-#Exportar
+#Exportar Productos>>>
 def exportar_productos_excel(request):
     productos = Producto.objects.all().values(
         'nombre', 'descripcion', 'costo', 'stock', 
@@ -299,3 +301,18 @@ def exportar_productos_pdf(request):
         return HttpResponse("Error al generar PDF", status=500)
 
     return response
+
+# Grafica Productos :) >>>>>
+def graficas_productos(request):
+    productos_disponibles = Producto.objects.filter(disponible=True).count()
+    productos_no_disponibles = Producto.objects.filter(disponible=False).count()
+    total_productos = Producto.objects.count()
+
+    valor_total_productos = Producto.objects.aggregate(total=Sum('costo'))['total'] or 0
+
+    return render(request, 'pruebayaab/graficas_productos.html', {
+        'productos_disponibles': productos_disponibles,
+        'productos_no_disponibles': productos_no_disponibles,
+        'total_productos': total_productos,
+        'valor_total_productos': valor_total_productos
+    })

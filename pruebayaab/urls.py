@@ -36,4 +36,6 @@ urlpatterns = [
     #Exportar EXCEL y PDF
     path('productos/exportar-excel/', views.exportar_productos_excel, name='exportar_productos_excel'),
     path('productos/exportar-pdf/', views.exportar_productos_pdf, name='exportar_productos_pdf'),
+    #Grafica productos
+     path('graficas/', views.graficas_productos, name='graficas_productos'),
 ]

@@ -44,51 +44,71 @@
     <div class="sidebar-wrapper">
         <div class="logo">
             <img src="{% static 'assets/img/logoYaab.png' %}" height="40" alt="YAAB">
-        </div> 
+        </div>
         <ul class="nav">
-            <!--Menu Recursos Humanos-->
-            <li>
-                <a href="#" class="nav-link" data-toggle="collapse" data-target="#recursosSubmenu" aria-expanded="false" >
+    
+            <!-- Menu Recursos Humanos -->
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-toggle="collapse" data-target="#recursosSubmenu" aria-expanded="false">
                     <i class="nc-icon nc-stre-right"></i>
                     <p>Recursos Humanos <b class="caret"></b></p>
                 </a>
-        
                 <div class="collapse" id="recursosSubmenu">
-                      <ul class="nav"> 
+                    <ul class="nav">
                         <li class="nav-item">
-                        <a class="nav-link" href="{% url 'formulario' %}">
-                            <i class="nc-icon nc-badge"></i>
-                            <p>Dudas y quejas</p>
-                        </a>
-                    </li>
-                </ul> 
-            </div>
+                            <a class="nav-link" href="{% url 'formulario' %}">
+                                <i class="nc-icon nc-badge"></i>
+                                <p>Dudas y quejas</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
-            <!--Menu Productos-->
-            <li>
-            <a href="#" class="nav-link" data-toggle="collapse" data-target="#productosSubmenu" aria-expanded="false">
-                <i class="nc-icon nc-stre-right"></i>
-                <p>Productos <b class="caret"></b></p>
-            </a>
-            <div class="collapse" id="productosSubmenu"> 
-                <ul class="nav"> 
-                    <li class="nav-item">
-                <a class="nav-link" href="{% url 'listar_categorias' %}">
-                    <i class="nc-icon nc-badge"></i>
-                    <p>Categoria</p>
-                </a>
-            </li>
+    
+            <!-- Menu Productos -->
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'lista_productos' %}">
-                    <i class="nc-icon nc-badge"></i>
-                    <p>Producto</p>
+                <a href="#" class="nav-link" data-toggle="collapse" data-target="#productosSubmenu" aria-expanded="false">
+                    <i class="nc-icon nc-stre-right"></i>
+                    <p>Productos <b class="caret"></b></p>
                 </a>
+                <div class="collapse" id="productosSubmenu">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'listar_categorias' %}">
+                                <i class="nc-icon nc-badge"></i>
+                                <p>Categoría</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'lista_productos' %}">
+                                <i class="nc-icon nc-badge"></i>
+                                <p>Producto</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
+    
+            <!-- Menu Gráficas -->
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-toggle="collapse" data-target="#graficasSubmenu" aria-expanded="false">
+                    <i class="nc-icon nc-stre-right"></i>
+                    <p>Gráficas <b class="caret"></b></p>
+                </a>
+                <div class="collapse" id="graficasSubmenu">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'graficas_productos' %}">
+                                <i class="nc-icon nc-chart-bar-32"></i>
+                                <p>Productos</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+    
         </ul>
-    </div>
- </li>
-</ul>
- </div> 
+    </div>    
  </div>
                <!-- <a class="nav-link" href="{% url  'listar_categorias' %}">
                     <i class="nc-icon nc-stre-right"></i>

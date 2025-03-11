@@ -1,0 +1,190 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Productos</h2>
+
+    <div class="dashboard-layout">
+        <!-- Indicadores a la izquierda -->
+        <div class="indicadores">
+            <div class="indicador-card glow-verde">
+                <div class="indicador-card-content">
+                    <h5>Productos Disponibles</h5>
+                    <p>{{ productos_disponibles }}</p>
+                </div>
+            </div>
+
+            <div class="indicador-card glow-rojo">
+                <div class="indicador-card-content">
+                    <h5>Productos No Disponibles</h5>
+                    <p>{{ productos_no_disponibles }}</p>
+                </div>
+            </div>
+
+            <div class="indicador-card glow-azul">
+                <div class="indicador-card-content">
+                    <h5>Valor Total del Inventario</h5>
+                    <p>${{ valor_total_productos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfica a la derecha -->
+        <div class="grafica-contenedor">
+            <canvas id="productosDonaChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('productosDonaChart').getContext('2d');
+
+    const data = {
+        labels: ['Productos Disponibles', 'Productos No Disponibles'],
+        datasets: [{
+            data: [{{ productos_disponibles }}, {{ productos_no_disponibles }}],
+            backgroundColor: ['#F9E79F', '#D5F5E3'],
+            borderWidth: 0,
+            hoverOffset: 8
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#555',
+                    font: {
+                        family: 'Arial, sans-serif',
+                        size: 14
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.raw || 0;
+                        return `${label}: ${value} productos`;
+                    }
+                }
+            }
+        },
+        cutout: '60%',
+        animation: {
+            animateRotate: true,
+            animateScale: true
+        }
+    };
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: options,
+        plugins: [{
+            beforeDraw: function(chart) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+                const fontSize = (height / 12).toFixed(2);
+                ctx.font = fontSize + "px Arial";
+                ctx.textBaseline = "middle";
+                const text = "Total: {{ total_productos }}";
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+                ctx.fillStyle = '#555';
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        }]
+    });
+</script>
+
+<style>
+    .dashboard-layout {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .indicadores {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 300px;
+    }
+
+    .indicador-card {
+        background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Efecto glow dinámico por tipo */
+    .glow-verde {
+        box-shadow: 0 0 16px rgba(236, 218, 51, 0.6);
+    }
+
+    .glow-rojo {
+        box-shadow: 0 0 16px rgba(72, 238, 196, 0.6);
+    }
+
+    .glow-azul {
+        box-shadow: 0 0 16px rgba(155, 226, 122, 0.377);
+    }
+
+    .indicador-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .indicador-card h5 {
+        margin: 0;
+        font-size: 14px;
+        color: #555;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .indicador-card p {
+        font-size: 24px;
+        font-weight: bold;
+        color: #064f9c;
+        margin: 8px 0 0;
+        letter-spacing: 0.5px;
+    }
+
+    .grafica-contenedor {
+        flex: 1;
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        max-width: 500px;
+        max-height: 500px;
+        overflow: hidden;
+        margin: auto;
+    }
+
+    h2 {
+        font-weight: bold;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
