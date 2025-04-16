@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User 
-from .models import Categoria, Producto
+from .models import Categoria, Producto, Tarea
 
 class Formularioyaab(forms.Form):
 
@@ -72,4 +72,11 @@ class ProductoForm(forms.ModelForm):
 
 
 
+class TareaForm(forms.ModelForm):
+    class Meta:
+        model = Tarea
+        fields = ['titulo', 'descripcion', 'fecha_vencimiento']  # Excluimos 'usuario' y 'completada'
 
+        widgets = {
+            'fecha_vencimiento': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

@@ -56,7 +56,7 @@
                 <div class="collapse" id="recursosSubmenu">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'formulario' %}">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:formulario' %}">
                                 <i class="nc-icon nc-badge"></i>
                                 <p>Dudas y quejas</p>
                             </a>
@@ -74,13 +74,13 @@
                 <div class="collapse" id="productosSubmenu">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'listar_categorias' %}">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:listar_categorias' %}">
                                 <i class="nc-icon nc-badge"></i>
                                 <p>Categoría</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'lista_productos' %}">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:lista_productos' %}">
                                 <i class="nc-icon nc-badge"></i>
                                 <p>Producto</p>
                             </a>
@@ -98,7 +98,7 @@
                 <div class="collapse" id="graficasSubmenu">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'graficas_productos' %}">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:graficas_productos' %}">
                                 <i class="nc-icon nc-chart-bar-32"></i>
                                 <p>Productos</p>
                             </a>
@@ -106,22 +106,34 @@
                     </ul>
                 </div>
             </li>
-    
+             <!-- Menu Actividades -->
+            <li class="nav-item">
+                <a href="#" class= nav-link data-toggle="collapse" data-target="#agendaSubmenu" aria-expanded="false">
+                    <i class="nc-icon nc-stre-right"></i>
+                    <p>Agenda <b class="caret" ></b></p>
+                </a>
+                <div class="collapse" id="agendaSubmenu">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:tarea_list_create' %}">
+                                <i class="nc-icon nc-chart-bar-32"></i>
+                                <p>Tareas</p>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pruebayaab_app:calendario' %}">
+                                <i class="nc-icon nc-badge"></i>
+                                <p>Calendario</p>
+                            </a>
+                        </li>
+                    
+                    </ul>
+                </div>
+            </li>
         </ul>
     </div>    
  </div>
-               <!-- <a class="nav-link" href="{% url  'listar_categorias' %}">
-                    <i class="nc-icon nc-stre-right"></i>
-                    <p>Categoria <b class="caret"></b></p>
-                </a>
-                <div class="collapse" id="recursosSubmenu"> <ul class = "nav" > <li class="nav-item">
-                    <a class="nav-link" href ="{% url 'lista_productos' %}">
-                        <i class="nc-icon nc-badge"></i>
-                        <p>Dudas y quejas</p>
-                    </a>
-                </li>
-            </ul>
-            </div> -->
         
         <div class="main-panel">
             <!-- Navbar -->
@@ -195,7 +207,7 @@
                                      <li><hr class="dropdown-divider"></li>
 
                                     <!-- Opción de cerrar sesión -->
-                                    <li><a class="dropdown-item" href="{% url 'logout_view' %}">Cerrar sesión</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'pruebayaab_app:logout_view' %}">Cerrar sesión</a></li>
                                     
                                     <!-- <a class="dropdown-item" href="#">Action</a>
                                     <a class="dropdown-item" href="#">Another action</a>
@@ -204,13 +216,6 @@
                                     <div class="divider"></div>
                                     <a class="dropdown-item" href="#">Separated link</a>
                                 </div>
-                            </li> -->
-                        
-                            <!--
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'logout_view' %}">
-                                    <span class="no-icon">Cerrar sesión</span>
-                                </a>
                             </li> -->
                         
                             </ul>

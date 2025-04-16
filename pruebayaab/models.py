@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 #Para categoria
@@ -24,3 +25,27 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
     
+#Tareas
+class Tarea(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('en_curso', 'En Curso'),
+        ('completada', 'Completada'),
+    ]
+
+    titulo = models.CharField(max_length=200)
+    descripcion = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    fecha_vencimiento = models.DateTimeField(null=True, blank=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.titulo
+    
+class Evento(models.Model):
+    nombre = models.CharField(max_length=255)
+    descripcion = models.TextField()
+    fecha_evento = models.DateTimeField()
+    
+    def __str__(self):
+        return self.nombre

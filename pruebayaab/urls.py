@@ -3,12 +3,13 @@ from . import views
 from django.contrib.auth import views as auth_views 
 #from .views import user_login, user_register
 
-app_name:'pruebayaab_app'
+
+app_name='pruebayaab_app'
 
 urlpatterns = [
     
     path('', views.landing, name='landing'),
-    path('login/', auth_views.LoginView.as_view(template_name='pruebayaab/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('formulario/', views.vista_formulario, name='formulario'),
     #path('logout/', auth_views.LogoutView.as_view(), name='logout'),
@@ -38,4 +39,15 @@ urlpatterns = [
     path('productos/exportar-pdf/', views.exportar_productos_pdf, name='exportar_productos_pdf'),
     #Grafica productos
      path('graficas/', views.graficas_productos, name='graficas_productos'),
+     path('api/categorias-productos-api/', views.categorias_productos_api, name='categorias_productos_api'),
+
+    # Ruta para listar y crear tareas (tareas del usuario logueado)
+    path('tareas/', views.TareaList.as_view(), name='tarea_list_create'),
+    #tablero
+    path('tareas/actualizar/', views.actualizar_estado_tarea, name='actualizar_estado_tarea'),
+    #calendario   
+    path('calendario/', views.calendario, name='calendario'),
+    path('crear-evento/', views.crear_evento, name='crear_evento'),
+    path('eventos/', views.obtener_eventos, name='obtener_eventos'),
+   
 ]

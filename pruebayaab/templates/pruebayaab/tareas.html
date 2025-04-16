@@ -1,0 +1,295 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Formulario para agregar tareas -->
+   <div class="formulario-tarea">
+        <h4>Crear Tarea</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ form.titulo.id_for_label }}">Título:</label>
+                    {{ form.titulo }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha de Vencimiento:</label>
+                    {{ form.fecha_vencimiento }}
+                </div>
+                <div class="form-group full-width">
+                    <label for="{{ form.descripcion.id_for_label }}">Descripción:</label>
+                    {{ form.descripcion }}
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn-crear-tarea">Crear Tarea</button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Tablero Kanban -->
+    <div class="kanban-board" id="kanban-board">
+        <div class="kanban-column" id="pendiente" data-column="pendiente">
+            <h3>Pendiente</h3>
+            {% for tarea in tareas_pendientes %}
+                <div class="kanban-item" id="task-{{ tarea.id }}" data-task-id="{{ tarea.id }}" draggable="true">
+                    {{ tarea.titulo }}
+                </div>
+            {% endfor %}
+        </div>
+    
+        <div class="kanban-column" id="en_curso" data-column="en_curso">
+            <h3>En Curso</h3>
+            {% for tarea in tareas_en_curso %}
+                <div class="kanban-item" id="task-{{ tarea.id }}" data-task-id="{{ tarea.id }}" draggable="true">
+                    {{ tarea.titulo }}
+                </div>
+            {% endfor %}
+        </div>
+    
+        <div class="kanban-column" id="completada" data-column="completada">
+            <h3>Completada</h3>
+            {% for tarea in tareas_completadas %}
+                <div class="kanban-item" id="task-{{ tarea.id }}" data-task-id="{{ tarea.id }}" draggable="true">
+                    {{ tarea.titulo }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>    
+</div>
+<div class="modal fade" id="detalleTareaModal" tabindex="-1" aria-labelledby="modalTitulo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitulo">Detalles de la tarea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Título:</strong> <span id="modalTituloTarea"></span></p>
+                <p><strong>Descripción:</strong> <span id="modalDescripcion"></span></p>
+                <p><strong>Fecha de vencimiento:</strong> <span id="modalFechaVencimiento"></span></p>
+                <p><strong>Estado:</strong> <span id="modalEstado"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button id="editarTareaBtn" class="btn btn-primary">Editar</button>
+                <button id="eliminarTareaBtn" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Script AJAX para la actualización del estado de la tarea -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const kanbanColumns = document.querySelectorAll('.kanban-column');
+
+        kanbanColumns.forEach(column => {
+            column.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+
+            column.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const tarea_id = e.dataTransfer.getData('task_id');
+                const nuevo_estado = column.getAttribute('data-column');
+
+                const taskElement = document.getElementById('task-' + tarea_id);
+                if (taskElement) {
+                    updateTaskStatus(tarea_id, nuevo_estado);
+                    column.appendChild(taskElement);
+                }
+            });
+        });
+
+        document.querySelectorAll('.kanban-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('task_id', this.dataset.taskId);
+            });
+        });
+
+        function updateTaskStatus(tarea_id, nuevo_estado) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'pruebayaab_app:actualizar_estado_tarea' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    task_id: tarea_id,
+                    estado: nuevo_estado,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    alert('Error al actualizar el estado de la tarea');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+</script>
+
+
+<style>
+    /* Diseño general */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7f9fc;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+  
+   
+    .formulario-tarea {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    }
+
+    .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f9f9f9;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.btn-crear-tarea {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #3498db;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-crear-tarea:hover {
+    background: #2980b9;
+}
+
+    .formulario-tarea h4 {
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .formulario-tarea form input,
+    
+    .formulario-tarea form select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        background: #f9f9f9;
+        transition: border 0.3s;
+    }
+    .formulario-tarea form textarea{
+        min-height: 20px;  /* Altura mínima */
+        max-height: 40px; /* Altura máxima */
+        resize: vertical;  
+    }
+
+    .btn-crear-tarea {
+        width: 100%;
+        max-width: 250px;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #3498db;
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .btn-crear-tarea:hover {
+        background: #2980b9;
+    }
+
+    /* Tablero Kanban */
+    .kanban-board {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .kanban-column {
+        flex: 1;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .kanban-column h3 {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #34495e;
+    }
+
+    .kanban-item {
+        background: #ecf0f1;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: grab;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .kanban-item:hover {
+        background: #d5dbdb;
+    }
+</style>
+
+{% endblock %}

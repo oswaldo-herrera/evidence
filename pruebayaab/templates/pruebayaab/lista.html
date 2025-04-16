@@ -5,10 +5,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <a href="{% url 'exportar_categorias_excel' %}" class="btn btn-success btn-sm">📊 Descargar Excel</a>
-        <a href="{% url 'exportar_categorias_pdf' %}" class="btn btn-danger btn-sm">📄 Descargar PDF</a>
+        <a href="{% url 'pruebayaab_app:exportar_categorias_excel' %}" class="btn btn-success btn-sm">📊 Descargar Excel</a>
+        <a href="{% url 'pruebayaab_app:exportar_categorias_pdf' %}" class="btn btn-danger btn-sm">📄 Descargar PDF</a>
     </div>
-    <a href="{% url 'crear_categoria' %}" class="btn btn-primary btn-sm">➕ Nueva Categoría</a>
+    <a href="{% url 'pruebayaab_app:crear_categoria' %}" class="btn btn-primary btn-sm">➕ Nueva Categoría</a>
 </div>
 
 <table class="table table-striped">
@@ -27,8 +27,8 @@
             <td>{{ categoria.descripcion }}</td>
             <td>{{ categoria.fecha_creacion }}</td>
             <td>
-                <a href="{% url 'editar_categoria' categoria.id %}" class="btn btn-warning btn-sm">Editar</a>
-                <a href="{% url 'eliminar_categoria' categoria.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                <a href="{% url 'pruebayaab_app:editar_categoria' categoria.id %}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="{% url 'pruebayaab_app:eliminar_categoria' categoria.id %}" class="btn btn-danger btn-sm">Eliminar</a>
             </td>
         </tr>
         {% endfor %}

@@ -2,29 +2,32 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="mb-4">Productos</h2>
-
+    <h2 class="mb-4">Productos</h2> 
+   
     <div class="dashboard-layout">
         <!-- Indicadores a la izquierda -->
-        <div class="indicadores">
-            <div class="indicador-card glow-verde">
-                <div class="indicador-card-content">
-                    <h5>Productos Disponibles</h5>
-                    <p>{{ productos_disponibles }}</p>
+        <div class="indicadores-card">
+            <h4 class="indicadores-titulo">Resumen de Productos</h4>
+            <div class="indicadores">
+                <div class="indicador-card glow-verde">
+                    <div class="indicador-card-content">
+                        <h5>Productos Disponibles</h5>
+                        <p>{{ productos_disponibles }}</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="indicador-card glow-rojo">
-                <div class="indicador-card-content">
-                    <h5>Productos No Disponibles</h5>
-                    <p>{{ productos_no_disponibles }}</p>
+        
+                <div class="indicador-card glow-rojo">
+                    <div class="indicador-card-content">
+                        <h5>Productos No Disponibles</h5>
+                        <p>{{ productos_no_disponibles }}</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="indicador-card glow-azul">
-                <div class="indicador-card-content">
-                    <h5>Valor Total del Inventario</h5>
-                    <p>${{ valor_total_productos }}</p>
+        
+                <div class="indicador-card glow-azul">
+                    <div class="indicador-card-content">
+                        <h5>Valor Total del Inventario</h5>
+                        <p>${{ valor_total_productos }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,7 +36,15 @@
         <div class="grafica-contenedor">
             <canvas id="productosDonaChart"></canvas>
         </div>
+        
+        
     </div>
+    <div class="grafica-contenedor-linea">
+        <h4 class="titulo-grafica">Disponibilidad de productos por categorias</h4>
+
+        <canvas id="productosLineaChart"></canvas>
+    </div>
+    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -59,7 +70,7 @@
                     color: '#555',
                     font: {
                         family: 'Arial, sans-serif',
-                        size: 14
+                        size: 12
                     }
                 }
             },
@@ -103,25 +114,106 @@
         }]
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    fetch('http://127.0.0.1:8000/yaab/api/categorias-productos-api/')  // Llamada a la API
+        .then(response => response.json())  // Convertimos la respuesta a JSON
+        .then(data => {
+            const ctxLine = document.getElementById('productosLineaChart').getContext('2d');
+
+            const dataLine = {
+                labels: data.categorias,  // Usa los nombres de categorías
+                datasets: [{
+                    label: 'Cantidad de Productos por Categoría',
+                    data: data.totales,  // Usa los totales de productos
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }]
+            };
+
+            const optionsLine = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Categorías'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cantidad de Productos'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctxLine, {
+                type: 'line',
+                data: dataLine,
+                options: optionsLine
+            });
+        })
+        .catch(error => console.error("Error cargando los datos:", error));
+});
+</script>
+
 
 <style>
     .dashboard-layout {
         display: flex;
         gap: 20px;
         align-items: flex-start;
+        margin-top: 0; /*modifique*/
+    }
+
+    .indicadores-card {
+        background: #fff;
+        padding: 15px 20px;
+        border-radius: 16px;
+        box-shadow: 0 6px 16px rgba(97, 39, 39, 0.1);
+        max-width: 350px;
+        text-align: center;
+        margin-left: 0;
+        margin-top: -10px;
+        height: auto;
+        min-height: unset;
+        width: auto;
+    }
+
+    .indicadores-titulo {
+        font-size: 12px;
+        margin-top:-15px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+        text-transform: uppercase;
     }
 
     .indicadores {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        width: 300px;
+        gap: 10px;
     }
 
     .indicador-card {
         background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-        border-radius: 16px;
-        padding: 16px;
+        border-radius: 10px;
+        padding: 10px;
         text-align: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         position: relative;
@@ -130,15 +222,15 @@
 
     /* Efecto glow dinámico por tipo */
     .glow-verde {
-        box-shadow: 0 0 16px rgba(236, 218, 51, 0.6);
+        box-shadow: 0 0 12px rgba(236, 218, 51, 0.6);
     }
 
     .glow-rojo {
-        box-shadow: 0 0 16px rgba(72, 238, 196, 0.6);
+        box-shadow: 0 0 12px rgba(72, 238, 196, 0.6);
     }
 
     .glow-azul {
-        box-shadow: 0 0 16px rgba(155, 226, 122, 0.377);
+        box-shadow: 0 0 12px rgba(155, 226, 122, 0.377);
     }
 
     .indicador-card:hover {
@@ -156,35 +248,63 @@
     }
 
     .indicador-card p {
-        font-size: 24px;
+        font-size: 14px;
         font-weight: bold;
         color: #064f9c;
         margin: 8px 0 0;
         letter-spacing: 0.5px;
     }
-
     .grafica-contenedor {
-        flex: 1;
+    flex: 1;
+    background: #fff;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;             /* Ocupar todo el ancho disponible */
+    height: 300px;           /* Ajusta la altura según tus necesidades */
+    max-width: 100%;         /* No limitar el ancho */
+    min-height: 300px;       /* Ajusta la altura mínima según el tamaño de la gráfica */
+    overflow: hidden;
+    margin: auto;
+    margin-top: -20px;        /* Ajusta el margen superior */
+    margin-left: 0;          /* Elimina el margen izquierdo si no es necesario */
+    }
+
+
+    .grafica-contenedor-linea {
+        width: 100%; /* Ocupar todo el ancho */
+        max-width: 100%; /* Limita el tamaño para mejor visualización */
+        margin: 20px auto; /* Centrar la gráfica */
+        margin-left: 10px;
         background: #fff;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
         border-radius: 16px;
         padding: 20px;
         display: flex;
         justify-content: center;
-        align-items: center;
-        min-height: 400px;
-        max-width: 500px;
-        max-height: 500px;
-        overflow: hidden;
-        margin: auto;
-    }
-
+        align-items: center;    
+        height: 400px;
+}
+    .titulo-grafica {
+    text-align: center;  /* Centra el título */
+    font-size: 1.5rem;    /* Ajusta el tamaño del título */
+    margin-bottom: 20px;  /* Espacio debajo del título */
+    color: #333;          /* Color del texto */
+    font-weight: bold;    /* Negrita para el título */
+}
+   
     h2 {
         font-weight: bold;
+        font-size: 18px; 
         color: #333;
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+        margin-top: -40px;
     }
 </style>
+
 {% endblock %}

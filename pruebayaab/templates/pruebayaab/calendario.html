@@ -1,0 +1,177 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+
+{% block content %}
+    <!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container">
+    <!--<h4>Calendario</h4>-->
+    <button id="crearEventoBtn">Crear Evento</button>
+    <div id="calendar"></div>
+    <form id="csrf-form">
+        {% csrf_token %}
+    </form>
+</div>
+
+
+<!-- Popuup para crear evento -->
+<script>
+    document.getElementById('crearEventoBtn').addEventListener("click", function() {
+        Swal.fire({
+            title: 'Crear nuevo evento',
+            html: `
+                <input id="eventoNombre" class="swal2-input" placeholder="Nombre del evento">
+                <textarea id="eventoDescripcion" class="swal2-textarea" placeholder="Descripción"></textarea>
+                <input id="eventoFecha" type="datetime-local" class="swal2-input">
+            `,
+            confirmButtonText: 'Guardar',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                return {
+                    nombre: document.getElementById('eventoNombre').value,
+                    descripcion: document.getElementById('eventoDescripcion').value,
+                    fecha: document.getElementById('eventoFecha').value
+                    
+                };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                guardarEvento(result.value);
+            }
+        });
+    });
+    
+    // enviar los datos y actuaalizar el calndario
+    function guardarEvento(evento) {
+        fetch("{% url 'pruebayaab_app:crear_evento' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken() // token CSRF para los datos
+            },
+            body: JSON.stringify(evento)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('¡Guardado!', 'El evento se ha creado correctamente.', 'success').then(() => {
+                    calendar.refetchEvents();
+                });
+                // Actualizar el caldario
+            } else {
+                Swal.fire('Error', data.error || 'No se pudo guardar el evento.', 'error');
+            }
+        });
+    }
+    
+    
+    
+    function getCSRFToken() {
+        let csrfTokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        return csrfTokenInput ? csrfTokenInput.value : "";
+    }
+</script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM cargado");
+
+        var btnCrearEvento = document.getElementById('crearEventoBtn');
+        if (btnCrearEvento) {
+            btnCrearEvento.addEventListener('click', function() {
+                console.log("Botón presionado");
+                document.getElementById('eventoModal').style.display = 'block';
+            });
+        } else {
+            console.error("No se encontró el botón #crearEventoBtn");
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es', // Para que aparezca en español
+        timeZone: 'local',
+        events: "{% url 'pruebayaab_app:obtener_eventos' %}", //Django devuelve valores
+        eventClick: function(info){
+            let eventoFechaHora = info.event.start.toLocaleString(); // Esto obtiene la fecha y hora local en formato legible
+            Swal.fire({
+                title:info.event.title,
+                text: `${info.event.extendedProps.description}\n\n\Fecha y Hora: ${eventoFechaHora}`, // Aquí agregas la fecha y hora
+                icon: 'info'
+            });
+        }
+      });
+      calendar.render();
+    });
+  </script>
+
+  <style>
+    .container {
+    text-align: right; /* Alinea el contenido a la derecha */
+}
+
+    #crearEventoBtn{
+        background-color: #636569; 
+        color: white; 
+        padding: 10px 20px; 
+        font-size: 16px; 
+        border: none; 
+        border-radius: 5px; /* Bordes redondeados */
+        cursor: pointer; /* Cambiar el cursor al pasar por encima */
+        transition: background-color 0.3s ease; 
+        margin-bottom: 20px;
+    }
+
+    #crearEventoBtn:hover {
+        background-color: #858892; /* Cambiar el color de fondo cuando el mouse pasa por encima */
+    }
+
+    #crearEventoBtn:focus {
+        outline: none; 
+    .swal2-popup {
+    padding: 20px; 
+    }
+
+    .swal2-html-container {
+    white-space: pre-line; /* Para que los saltos de línea se respeten */
+    } 
+    /* Full calendar colores */
+    .fc-button {
+    background-color: #4CAF50; /* Fondo verde */
+    color: white; /* Texto blanco */
+}
+
+
+.fc-button:hover {
+    background-color: #4574a0 !important; 
+    color: #fff; 
+}
+
+/* Ajustar el tamaño de los botones */
+.fc-button {
+    font-size: 14px; /* Tamaño de texto */
+    padding: 10px 15px; /* Espaciado interno */
+}
+
+
+.fc-prev-button, .fc-next-button {
+    background-color: #4574a0 !important;
+    color: white;
+}
+
+.fc-prev-button:hover, .fc-next-button:hover {
+    background-color: #4574a0 !important;
+    color: white;
+}
+}
+    
+  </style>
+{% endblock %}

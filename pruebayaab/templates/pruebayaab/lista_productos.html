@@ -4,14 +4,24 @@
 <div class="container mt-4">
     <h2>Lista de Productos</h2>
 
+    <form method="GET" class="mb-3">
+        <div class="d-flex justify-content-between">
+            <input type="text" name="nombre" class="form-control mr-2" placeholder="Buscar por nombre" value="{{ request.GET.nombre }}">
+            <input type="text" name="descripcion" class="form-control mr-2" placeholder="Buscar por descripción" value="{{ request.GET.descripcion }}">
+            <input type="text" name="categoria" class="form-control mr-2" placeholder="Buscar por categoría" value="{{ request.GET.categoria }}">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+   
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <a href="{% url 'exportar_productos_excel' %}" class="btn btn-success btn-sm">📊 Descargar Excel</a>
-            <a href="{% url 'exportar_productos_pdf' %}" class="btn btn-danger btn-sm">📄 Descargar PDF</a>
+            <a href="{% url 'pruebayaab_app:exportar_productos_excel' %}" class="btn btn-success btn-sm">📊 Descargar Excel</a>
+            <a href="{% url 'pruebayaab_app:exportar_productos_pdf' %}" class="btn btn-danger btn-sm">📄 Descargar PDF</a>
         </div>
-        <a href="{% url 'crear_producto' %}" class="btn btn-primary btn-sm">➕ Nuevo Producto</a>
+        <a href="{% url 'pruebayaab_app:crear_producto' %}" class="btn btn-primary btn-sm">➕ Nuevo Producto</a>
     </div>
-
+       
     <table class="table table-striped">
         <thead>
             <tr>
@@ -34,8 +44,8 @@
                 <td>{{ producto.categoria.nombre }}</td>
                 <td>{% if producto.disponible %}Sí{% else %}No{% endif %}</td>
                 <td>
-                    <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a href="{% url 'pruebayaab_app:editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'pruebayaab_app:eliminar_producto' producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}
