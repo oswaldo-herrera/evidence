@@ -28,6 +28,11 @@ from django.db.models import Q
 from django.utils.timezone import make_aware, is_naive
 import pytz
 from django.views.decorators.http import require_POST
+#organigrama
+from django.shortcuts import render, get_object_or_404
+from .models import NodoOrganigrama
+from .forms import NodoForm
+from django.http import HttpResponse
 
 
 #tareass
@@ -49,6 +54,19 @@ from django.views.decorators.csrf import csrf_exempt
 #calendario
 from. models import Evento
 from datetime import datetime
+
+#NODOS JS-GOJS
+from django.http import JsonResponse
+from .models import NodoOrganigrama
+
+######### LAS NUEVAS PARA ORGANIGRAMA
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from .models import NodoOrganigrama
+from django.views.decorators.http import require_POST
+from django.urls import reverse
+
+
 
 
 
@@ -513,3 +531,76 @@ def obtener_eventos(request):
         for evento in eventos
     ]
     return JsonResponse(eventos_lista, safe=False)
+
+
+
+#organigrama views >>>>>>>>>
+def organigrama_view(request):
+    raiz = NodoOrganigrama.objects.filter(padre=None).first()
+    return render(request, 'pruebayaab/organigrama.html', {'raiz': raiz})
+
+
+#vista para obtener nodos a JS
+def nodos_json(request):
+    nodos = NodoOrganigrama.objects.all()
+    data = []
+
+    for nodo in nodos:
+        data.append({
+            "key": nodo.id,
+            "name": f"{nodo.nombre} - {nodo.puesto}",
+            "parent": nodo.padre.id if nodo.padre else ""
+        })
+
+    return JsonResponse(data, safe=False)
+
+##################33
+def formulario_nodo(request, nodo_id=None):
+    padre_id = request.GET.get('padre_id')
+
+    if nodo_id:
+        nodo = get_object_or_404(NodoOrganigrama, id=nodo_id)
+        form = NodoForm(instance=nodo)
+        padre_id = nodo.padre.id if nodo.padre else None  # 👈 esto es clave
+        action_url = reverse('pruebayaab_app:guardar_nodo', args=[nodo_id])
+    else:
+        nodo = None
+        form = NodoForm(initial={'padre': padre_id} if padre_id else None)
+        action_url = reverse('pruebayaab_app:crear_nodo')
+
+    return render(request, 'pruebayaab/formulario_nodo.html', {
+        'form': form,
+        'nodo': nodo,
+        'padre_id': padre_id,
+        'action_url': action_url,
+    })
+
+
+@require_POST
+def guardar_nodo(request, nodo_id=None):
+    print("Guardando nodo...")
+    if nodo_id:
+        nodo = get_object_or_404(NodoOrganigrama, id=nodo_id)
+    else:
+        nodo = NodoOrganigrama()
+
+    nodo.nombre = request.POST["nombre"]
+    nodo.puesto = request.POST["puesto"]
+    padre_id = request.POST.get("padre_id")
+    nodo.padre_id = padre_id if padre_id else None
+    nodo.save()
+
+    return JsonResponse({"success": True, "reload": True})
+
+@require_POST
+def eliminar_nodo(request, nodo_id):
+    print(f"Eliminando nodo {nodo_id}")
+    nodo = get_object_or_404(NodoOrganigrama, id=nodo_id)
+    if nodo.hijos.exists():
+        return JsonResponse({"success": False, "error": "No se puede eliminar. Tiene subordinados."})
+    nodo.delete()
+    return JsonResponse({"success": True})
+
+
+
+

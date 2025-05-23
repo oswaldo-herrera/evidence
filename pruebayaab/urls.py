@@ -49,5 +49,15 @@ urlpatterns = [
     path('calendario/', views.calendario, name='calendario'),
     path('crear-evento/', views.crear_evento, name='crear_evento'),
     path('eventos/', views.obtener_eventos, name='obtener_eventos'),
-   
+    #organigrama
+    path('organigrama/', views.organigrama_view, name='organigrama'),
+    #NODOS JS
+    path('organigrama-json/', views.nodos_json, name='nodos_json'),
+    #########
+    path('formulario_nodo/', views.formulario_nodo, name="formulario_crear_nodo"),
+    #EDITAR
+    path('formulario_nodo/<int:nodo_id>/', views.formulario_nodo, name="formulario_editar_nodo"),
+    path('crear-nodo/', views.guardar_nodo, name="crear_nodo"),
+    path('guardar-nodo/<int:nodo_id>/', views.guardar_nodo, name="guardar_nodo"),
+    path('eliminar-nodo/<int:nodo_id>/', views.eliminar_nodo, name="eliminar_nodo"),
 ]

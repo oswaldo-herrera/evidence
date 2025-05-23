@@ -1,0 +1,17 @@
+<form 
+  hx-post="{{ action_url }}"
+  method="POST"
+  hx-target="#modal-content-inner" 
+  hx-swap="innerHTML"
+>
+  {% csrf_token %}
+  <input type="hidden" name="padre_id" value="{{ padre_id|default_if_none:'' }}">
+  
+  <label>Nombre:</label><br>
+  <input type="text" name="nombre" value="{{ nodo.nombre|default:'' }}"><br>
+
+  <label>Puesto:</label><br>
+  <input type="text" name="puesto" value="{{ nodo.puesto|default:'' }}"><br>
+
+  <button type="submit">Guardar</button>
+</form>

@@ -1,0 +1,17 @@
+<div style="margin-left: 20px; border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+    <strong>{{ nodo.nombre }}</strong> - {{ nodo.puesto }}
+    {% if nodo.id %}
+    <button 
+        hx-get="{% url 'pruebayaab_app:nodo_formulario' nodo.id %}" 
+        hx-target="#formulario-{{ nodo.id }}" 
+        hx-swap="innerHTML">
+        ➕ Agregar subordinado
+    </button>
+    {% endif %}
+
+    <div id="formulario-{{ nodo.id }}"></div>
+
+    {% for hijo in nodo.hijos.all %}
+        {% include "pruebayaab/nodo.html" with nodo=hijo %}
+    {% endfor %}
+</div>

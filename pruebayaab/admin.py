@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categoria, Producto, Tarea, Evento
+from .models import Categoria, Producto, Tarea, Evento, NodoOrganigrama
 
 
 # Register your models here.
@@ -25,3 +25,5 @@ class EventoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'descripcion', 'fecha_evento')  # Campos visibles en la lista
     search_fields = ('nombre', 'descripcion')  # Permite buscar por nombre y descripción
     list_filter = ('fecha_evento',)  # Filtro por fecha de evento
+
+admin.site.register(NodoOrganigrama)

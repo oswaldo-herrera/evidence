@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User 
-from .models import Categoria, Producto, Tarea
+from .models import Categoria, Producto, Tarea, NodoOrganigrama
 
 class Formularioyaab(forms.Form):
 
@@ -80,3 +80,10 @@ class TareaForm(forms.ModelForm):
         widgets = {
             'fecha_vencimiento': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+
+#organigrama>>>>
+class NodoForm(forms.ModelForm):
+    class Meta:
+        model = NodoOrganigrama
+        fields = ['nombre', 'puesto']

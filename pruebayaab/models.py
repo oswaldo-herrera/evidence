@@ -41,7 +41,8 @@ class Tarea(models.Model):
 
     def __str__(self):
         return self.titulo
-    
+
+#Eventos tareas...
 class Evento(models.Model):
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField()
@@ -49,3 +50,13 @@ class Evento(models.Model):
     
     def __str__(self):
         return self.nombre
+    
+#Organigrama
+class NodoOrganigrama(models.Model):
+    nombre = models.CharField(max_length=100)
+    puesto = models.CharField(max_length=100)
+    padre = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='hijos')
+
+    def __str__(self):
+        return f"{self.nombre} ({self.puesto})"
+# un nodo raíz sin padre, y los hiijos apuntan al paddres

@@ -1,0 +1,172 @@
+{% extends 'pruebayaab/dashboard_template.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Organigrama</h2>
+
+<!-- Modal HTMX -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="cerrar-modal" onclick="cerrarModal()">❌</span>
+    <div id="modal-content-inner" hx-target="this" hx-swap="innerHTML"></div>
+
+  </div>
+</div>
+
+
+<!-- Organigrama -->
+<div id="organigramaDiv" style="width:100%; height:600px; border:1px solid lightgray;"></div>
+
+<script src="https://unpkg.com/gojs/release/go.js"></script>
+<script>
+  const $ = go.GraphObject.make;
+
+// URLs generadas por Django
+const urlFormularioCrear = "{% url 'pruebayaab_app:formulario_crear_nodo' %}?padre_id=";
+const urlFormularioEditar = "{% url 'pruebayaab_app:formulario_editar_nodo' nodo_id=0 %}";
+const urlEliminar = "{% url 'pruebayaab_app:eliminar_nodo' nodo_id=0 %}";
+
+const diagrama = $(go.Diagram, "organigramaDiv", {
+  layout: $(go.TreeLayout, { angle: 90, layerSpacing: 30 }),
+  "undoManager.isEnabled": true
+});
+
+diagrama.nodeTemplate =
+  $(go.Node, "Vertical",
+    $(go.Shape, "RoundedRectangle", { fill: "#ACE3F2", strokeWidth: 0 }),
+    $(go.TextBlock, { margin: 8, font: "bold 12px sans-serif" }, new go.Binding("text", "name")),
+    $(go.Panel, "Horizontal",
+      $("Button", {
+        click: (e, obj) => abrirModal(urlFormularioCrear + obj.part.data.key)
+      }, $(go.TextBlock, "➕")),
+      $("Button", {
+        click: (e, obj) => abrirModal(urlFormularioEditar.replace("0", obj.part.data.key))
+      }, $(go.TextBlock, "✏️")),
+      $("Button", {
+        click: (e, obj) => eliminarNodo(obj.part.data.key)
+      }, $(go.TextBlock, "🗑️"))
+    )
+  );
+
+diagrama.linkTemplate = $(go.Link, $(go.Shape), $(go.Shape, { toArrow: "Standard" }));
+
+fetch("{% url 'pruebayaab_app:nodos_json' %}")
+  .then(response => response.json())
+  .then(data => {
+    data.forEach(n => { if (n.parent === null) n.parent = ""; });
+    diagrama.model = new go.TreeModel(data);
+  });
+
+//function abrirModal(url) {
+  //fetch(url)
+    //.then(r => r.text())
+    //.then(html => {
+      //const modal = document.getElementById("modal");
+      //document.getElementById("modal-content-inner").innerHTML = html;
+      //modal.classList.add("show");
+      //console.log("Modal abierto con HTML cargado.");
+    //});
+//}
+
+function abrirModal(url) {
+  const modal = document.getElementById("modal");
+  const content = document.getElementById("modal-content-inner");
+  content.setAttribute("hx-get", url);
+  content.setAttribute("hx-trigger", "load");
+  modal.classList.add("show");
+  htmx.process(content);
+}
+
+function cerrarModal() { 
+  document.getElementById("modal").classList.remove("show");
+}
+
+function eliminarNodo(id) {
+  if (confirm("¿Eliminar este nodo?")) {
+    const url = urlEliminar.replace("0", id);
+    fetch(url, {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{ csrf_token }}" }
+    }).then(r => r.json())
+      .then(data => {
+        if (data.success) location.reload();
+        else alert(data.error || "No se pudo eliminar");
+      });
+  }
+}
+
+// Cerrar modal si se da clic fuera
+window.onclick = function(event) {
+  const modal = document.getElementById("modal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+<script>
+  document.body.addEventListener('htmx:afterRequest', function(evt) {
+    if (evt.detail.xhr.responseType === "" || evt.detail.xhr.responseType === "text") {
+      try {
+        const data = JSON.parse(evt.detail.xhr.responseText);
+        if (data.success && data.reload) {
+          cerrarModal();  // Cierra el modal
+          location.reload();  // Recarga el organigrama
+        }
+      } catch (e) {
+        // No es JSON o no necesitamos hacer nada
+      }
+    }
+  });
+</script>
+
+
+
+<style>
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+</style>
+{% endblock %}
